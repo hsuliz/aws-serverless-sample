@@ -1,0 +1,6 @@
+{
+  "Parameters": {
+    "TABLE": "Books",
+    "AWS_ENDPOINT_URL": "http://docker.for.mac.localhost:8000"
+  }
+}
