@@ -17,13 +17,23 @@ func NewAPIGatewayV2(books *domain.Books) *APIGatewayV2 {
 	return &APIGatewayV2{booksDomain: books}
 }
 
-func (g APIGatewayV2) Get(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	log.Println("got event\n", event)
-	books, err := g.booksDomain.FindAll(ctx)
+func (g APIGatewayV2) Find(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	books, err := g.booksDomain.Find(ctx)
 	if err != nil {
 		return errResponse(http.StatusInternalServerError, err.Error()), nil
 	}
 
+	return response(http.StatusOK, books), nil
+}
+
+func (g APIGatewayV2) Get(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	bookID, _ := request.PathParameters["id"]
+	log.Println(bookID)
+
+	books, err := g.booksDomain.GetByID(ctx, bookID)
+	if err != nil {
+		return errResponse(http.StatusInternalServerError, err.Error()), nil
+	}
 	return response(http.StatusOK, books), nil
 }
 

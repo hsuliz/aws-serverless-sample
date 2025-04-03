@@ -3,5 +3,6 @@ package types
 import "context"
 
 type Store interface {
-	FindAll(context.Context) (BookRange, error)
+	FindBooks(context.Context) (BookRange, error)
+	GetBook(context.Context, string) (*Book, error)
 }

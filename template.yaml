@@ -16,19 +16,38 @@ Globals:
     Tracing: Active
     Environment:
       Variables:
-        TABLE: !Ref Table
+        TABLE_NAME: !Ref Table
         AWS_ENDPOINT_URL: !Ref AWSEndpointURL
 
 Resources:
-  GetBooksFunction:
+  FindFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/cmd/lambda/find
+      Events:
+        FindAllBooks:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: GET
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:Scan
+              Resource: !GetAtt Table.Arn
+    Metadata:
+      BuildMethod: makefile
+
+  GetFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/cmd/lambda/get
       Events:
-        Api:
+        GetById:
           Type: HttpApi
           Properties:
-            Path: /
+            Path: /{id}
             Method: GET
       Policies:
         - Version: "2012-10-17"
