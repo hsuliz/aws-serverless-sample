@@ -30,11 +30,11 @@ func (g APIGatewayV2) Get(ctx context.Context, request events.APIGatewayV2HTTPRe
 	bookID, _ := request.PathParameters["id"]
 	log.Println(bookID)
 
-	books, err := g.booksDomain.GetByID(ctx, bookID)
+	book, err := g.booksDomain.GetByID(ctx, bookID)
 	if err != nil {
 		return errResponse(http.StatusInternalServerError, err.Error()), nil
 	}
-	return response(http.StatusOK, books), nil
+	return response(http.StatusOK, book), nil
 }
 
 func response(code int, object interface{}) events.APIGatewayV2HTTPResponse {

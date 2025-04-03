@@ -6,6 +6,7 @@ type (
 		Title     string `dynamodbav:"title" json:"title"`
 		Pages     int    `dynamodbav:"pages" json:"pages"`
 		PagesDone int    `dynamodbav:"pages_done" json:"pages_done"`
+		BookDone  bool   `json:"book_done"`
 	}
 
 	BookRange struct {

@@ -14,9 +14,24 @@ func NewBooks(store types.Store) *Books {
 }
 
 func (b Books) Find(ctx context.Context) (types.BookRange, error) {
-	return b.store.FindBooks(ctx)
+	books, err := b.store.FindBooks(ctx)
+	return books, err
 }
 
 func (b Books) GetByID(ctx context.Context, id string) (*types.Book, error) {
-	return b.store.GetBook(ctx, id)
+	book, err := b.store.GetBook(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if book == nil {
+		return nil, nil
+	}
+
+	book.BookDone = isDone(*book)
+	return book, err
+}
+
+func isDone(book types.Book) bool {
+	return book.PagesDone == book.Pages
 }
