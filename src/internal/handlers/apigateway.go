@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
-	"log"
 	"net/http"
 	"read-stats/internal/domain"
 	"read-stats/internal/types"
@@ -29,7 +28,6 @@ func (g APIGatewayV2) Find(ctx context.Context, request events.APIGatewayV2HTTPR
 
 func (g APIGatewayV2) Get(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	bookID, _ := request.PathParameters["id"]
-	log.Println(bookID)
 
 	book, err := g.booksDomain.GetByID(ctx, bookID)
 	if err != nil {

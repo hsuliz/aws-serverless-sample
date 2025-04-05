@@ -20,7 +20,7 @@ type DynamoDB struct {
 func NewDynamoDB(ctx context.Context, tableName string) *DynamoDB {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
-		log.Fatalf("unable to load SDK config, %v", err)
+		log.Fatalf(err.Error())
 	}
 	client := dynamodb.NewFromConfig(cfg)
 	return &DynamoDB{
@@ -45,7 +45,6 @@ func (d DynamoDB) FindBooks(ctx context.Context) (types.BookRange, error) {
 		return bookRange, fmt.Errorf("failed to get items from DynamoDB: %w", err)
 	}
 	err = attributevalue.UnmarshalListOfMaps(result.Items, &bookRange.Books)
-	log.Println(bookRange)
 	return bookRange, nil
 }
 
