@@ -25,7 +25,7 @@ Resources:
     Properties:
       CodeUri: src/cmd/lambda/find
       Events:
-        FindAllBooks:
+        FindAll:
           Type: HttpApi
           Properties:
             Path: /
@@ -54,6 +54,25 @@ Resources:
           Statement:
             - Effect: Allow
               Action: dynamodb:Scan
+              Resource: !GetAtt Table.Arn
+    Metadata:
+      BuildMethod: makefile
+
+  PostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/cmd/lambda/post
+      Events:
+        Post:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: POST
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:PutItem
               Resource: !GetAtt Table.Arn
     Metadata:
       BuildMethod: makefile

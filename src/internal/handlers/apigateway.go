@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"read-stats/internal/domain"
+	"read-stats/internal/types"
 )
 
 type APIGatewayV2 struct {
@@ -35,6 +36,24 @@ func (g APIGatewayV2) Get(ctx context.Context, request events.APIGatewayV2HTTPRe
 		return errResponse(http.StatusInternalServerError, err.Error()), nil
 	}
 	return response(http.StatusOK, book), nil
+}
+
+func (g APIGatewayV2) Post(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	book := types.Book{}
+	if err := json.Unmarshal([]byte(request.Body), &book); err != nil {
+		return errResponse(http.StatusBadRequest, err.Error()), nil
+	}
+
+	if book.Title == "" {
+		return errResponse(http.StatusBadRequest, "Missing book title"), nil
+	}
+
+	createdBook, err := g.booksDomain.Create(ctx, book)
+	if err != nil {
+		return errResponse(http.StatusBadRequest, err.Error()), nil
+	}
+
+	return response(http.StatusOK, createdBook), nil
 }
 
 func response(code int, object interface{}) events.APIGatewayV2HTTPResponse {

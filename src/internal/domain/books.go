@@ -2,7 +2,9 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"read-stats/internal/types"
+	"time"
 )
 
 type Books struct {
@@ -30,6 +32,22 @@ func (b Books) GetByID(ctx context.Context, id string) (*types.Book, error) {
 
 	book.BookDone = isDone(*book)
 	return book, err
+}
+
+func (b Books) Create(ctx context.Context, book types.Book) (*types.Book, error) {
+	book.ID = b.generateID()
+
+	err := b.store.CreateBook(ctx, book)
+	if err != nil {
+		return nil, err
+	}
+
+	return &book, nil
+}
+
+func (b Books) generateID() string {
+	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
+	return fmt.Sprintf("%d", timestamp)
 }
 
 func isDone(book types.Book) bool {

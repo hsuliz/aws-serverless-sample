@@ -74,3 +74,20 @@ func (d DynamoDB) GetBook(ctx context.Context, id string) (*types.Book, error) {
 
 	return &book, nil
 }
+
+func (d DynamoDB) CreateBook(ctx context.Context, book types.Book) error {
+	item, err := attributevalue.MarshalMap(&book)
+	if err != nil {
+		return err
+	}
+
+	_, err = d.client.PutItem(ctx, &dynamodb.PutItemInput{
+		TableName: &d.tableName,
+		Item:      item,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
