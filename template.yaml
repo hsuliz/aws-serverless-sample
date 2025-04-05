@@ -77,6 +77,25 @@ Resources:
     Metadata:
       BuildMethod: makefile
 
+  PutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/cmd/lambda/put
+      Events:
+        Put:
+          Type: HttpApi
+          Properties:
+            Path: /{id}
+            Method: PUT
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:UpdateItem
+              Resource: !GetAtt Table.Arn
+    Metadata:
+      BuildMethod: makefile
+
   Table:
     Type: AWS::DynamoDB::Table
     Properties:
