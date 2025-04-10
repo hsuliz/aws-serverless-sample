@@ -116,3 +116,19 @@ func (d DynamoDB) UpdateBookPagesDone(ctx context.Context, bookID string, pagesD
 
 	return nil
 }
+
+func (d DynamoDB) DeleteBook(ctx context.Context, bookID string) error {
+	deleteInput := &dynamodb.DeleteItemInput{
+		TableName: &d.tableName,
+		Key: map[string]ddbtypes.AttributeValue{
+			"id": &ddbtypes.AttributeValueMemberS{Value: bookID},
+		},
+	}
+
+	_, err := d.client.DeleteItem(ctx, deleteInput)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

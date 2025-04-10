@@ -26,10 +26,6 @@ func (b Books) GetByID(ctx context.Context, id string) (*types.Book, error) {
 		return nil, err
 	}
 
-	if book == nil {
-		return nil, nil
-	}
-
 	book.BookDone = isDone(*book)
 	return book, err
 }
@@ -47,6 +43,14 @@ func (b Books) Create(ctx context.Context, book types.Book) (*types.Book, error)
 
 func (b Books) UpdateBookPagesDone(ctx context.Context, bookID string, pagesDone int) error {
 	return b.store.UpdateBookPagesDone(ctx, bookID, pagesDone)
+}
+
+func (b Books) Delete(ctx context.Context, bookID string) error {
+	_, err := b.GetByID(ctx, bookID)
+	if err != nil {
+		return err
+	}
+	return b.store.DeleteBook(ctx, bookID)
 }
 
 func (b Books) generateID() string {

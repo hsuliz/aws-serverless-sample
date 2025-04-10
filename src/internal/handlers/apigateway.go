@@ -74,6 +74,20 @@ func (g APIGatewayV2) Patch(ctx context.Context, request events.APIGatewayV2HTTP
 	return response(http.StatusOK, ""), nil
 }
 
+func (g APIGatewayV2) Delete(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	bookID := request.PathParameters["id"]
+	if bookID == "" {
+		return errResponse(http.StatusBadRequest, "book id is empty"), nil
+	}
+
+	err := g.booksDomain.Delete(ctx, bookID)
+	if err != nil {
+		//#TODO add error type
+		return errResponse(http.StatusInternalServerError, err.Error()), nil
+	}
+	return response(http.StatusOK, ""), nil
+}
+
 func response(code int, object interface{}) events.APIGatewayV2HTTPResponse {
 	marshalled, err := json.Marshal(object)
 	if err != nil {

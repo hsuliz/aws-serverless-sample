@@ -96,6 +96,25 @@ Resources:
     Metadata:
       BuildMethod: makefile
 
+  DeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/cmd/lambda/delete
+      Events:
+        Delete:
+          Type: HttpApi
+          Properties:
+            Path: /{id}
+            Method: DELETE
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:DeleteItem
+              Resource: !GetAtt Table.Arn
+    Metadata:
+      BuildMethod: makefile
+
   Table:
     Type: AWS::DynamoDB::Table
     Properties:
