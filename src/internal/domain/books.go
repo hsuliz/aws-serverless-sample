@@ -45,6 +45,10 @@ func (b Books) Create(ctx context.Context, book types.Book) (*types.Book, error)
 	return &book, nil
 }
 
+func (b Books) UpdateBookPagesDone(ctx context.Context, bookID string, pagesDone int) error {
+	return b.store.UpdateBookPagesDone(ctx, bookID, pagesDone)
+}
+
 func (b Books) generateID() string {
 	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
 	return fmt.Sprintf("%d", timestamp)

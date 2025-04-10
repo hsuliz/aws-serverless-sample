@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"log"
@@ -84,6 +85,31 @@ func (d DynamoDB) CreateBook(ctx context.Context, book types.Book) error {
 		TableName: &d.tableName,
 		Item:      item,
 	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d DynamoDB) UpdateBookPagesDone(ctx context.Context, bookID string, pagesDone int) error {
+	update := expression.Set(expression.Name("pages_done"), expression.Value(pagesDone))
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		return err
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName: &d.tableName,
+		Key: map[string]ddbtypes.AttributeValue{
+			"id": &ddbtypes.AttributeValueMemberS{Value: bookID},
+		},
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		UpdateExpression:          expr.Update(),
+	}
+
+	_, err = d.client.UpdateItem(ctx, input)
 	if err != nil {
 		return err
 	}

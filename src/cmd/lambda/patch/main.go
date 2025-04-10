@@ -23,5 +23,5 @@ func main() {
 	dynamoDB := store.NewDynamoDB(context.TODO(), tableName)
 	booksDomain := domain.NewBooks(dynamoDB)
 	handler := handlers.NewAPIGatewayV2(booksDomain)
-	lambda.Start(handler.Put)
+	lambda.Start(handler.Patch)
 }

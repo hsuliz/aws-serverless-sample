@@ -54,6 +54,26 @@ func (g APIGatewayV2) Post(ctx context.Context, request events.APIGatewayV2HTTPR
 	return response(http.StatusOK, createdBook), nil
 }
 
+func (g APIGatewayV2) Patch(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	bookID := request.PathParameters["id"]
+	if bookID == "" || request.Body == "" {
+		return errResponse(http.StatusBadRequest, ""), nil
+	}
+
+	var payload struct {
+		PagesDone int `json:"pages_done"`
+	}
+	if err := json.Unmarshal([]byte(request.Body), &payload); err != nil {
+		return errResponse(http.StatusInternalServerError, err.Error()), nil
+	}
+
+	if err := g.booksDomain.UpdateBookPagesDone(ctx, bookID, payload.PagesDone); err != nil {
+		return errResponse(http.StatusInternalServerError, err.Error()), nil
+	}
+
+	return response(http.StatusOK, ""), nil
+}
+
 func response(code int, object interface{}) events.APIGatewayV2HTTPResponse {
 	marshalled, err := json.Marshal(object)
 	if err != nil {

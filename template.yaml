@@ -77,16 +77,16 @@ Resources:
     Metadata:
       BuildMethod: makefile
 
-  PutFunction:
+  PatchFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/cmd/lambda/put
+      CodeUri: src/cmd/lambda/patch
       Events:
-        Put:
+        Patch:
           Type: HttpApi
           Properties:
             Path: /{id}
-            Method: PUT
+            Method: PATCH
       Policies:
         - Version: "2012-10-17"
           Statement:
